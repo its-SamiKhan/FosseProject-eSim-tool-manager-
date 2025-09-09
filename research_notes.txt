@@ -1,0 +1,12 @@
+eSim: Free EDA tool. Needs Ngspice (simulation), KiCad (schematics/PCB).
+Ngspice install: brew install ngspice
+KiCad install: brew install --cask kicad
+Ngspice version command: ngspice --version
+KiCad version command: /Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli version
+Ngspice latest: [e.g., 43]
+KiCad latest: [e.g., 8.0.4]
+Python: Runs commands, checks websites.
+CLI: Text menu in Terminal.
+Dependencies: Handled by Homebrew.
+Python version: [your version]
+Libraries needed: subprocess, platform, os, json, requests, beautifulsoup4
