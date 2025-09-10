@@ -1,168 +1,82 @@
-# Research Notes: eSim Automated Tool Manager
+eSim: Free EDA tool developed by FOSSEE at IIT Bombay for circuit design and simulation. Needs Ngspice (simulation), KiCad (schematics/PCB), and optionally GHDL (VHDL simulation for advanced features).
 
-## eSim Overview
+Ngspice:
+- What is it: Circuit simulator for analog/digital mixed-signal analysis.
+- Install command (macOS): brew install ngspice
+- Install command (Linux/Ubuntu): sudo apt update && sudo apt install ngspice
+- Install command (Windows/Chocolatey): choco install ngspice
+- Version command: ngspice --version (outputs e.g., "ngspice-45.2 plus...")
+- Latest version (Sep 11, 2025): 45.2 (stable release from ngspice.sourceforge.io/download.html)
+- Dependencies: Handled by package managers (e.g., fftw, gcc, libpng on macOS via Homebrew; checked in code before install).
 
-- **eSim:** Free EDA tool developed by FOSSEE at IIT Bombay for circuit design and simulation.
-- **Required tools:**  
-  - **Ngspice:** Simulation  
-  - **KiCad:** Schematics/PCB  
-  - **GHDL (optional):** VHDL simulation for advanced features
+KiCad:
+- What is it: Tool for schematics, PCB layout, and 3D viewing.
+- Install command (macOS): brew install --cask kicad
+- Install command (Linux/Ubuntu): sudo add-apt-repository ppa:kicad/kicad-9.0-releases && sudo apt update && sudo apt install kicad
+- Install command (Windows/Chocolatey): choco install kicad
+- Version command: kicad-cli version (outputs e.g., "KiCad 9.0.4"); fallback for macOS manual install: /Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli version
+- Latest version (Sep 11, 2025): 9.0.4 (stable release from kicad.org/download)
+- Dependencies: Handled by package managers (e.g., libwxgtk on Linux; checked in code).
 
----
+GHDL (Added for VHDL Support in eSim):
+- What is it: VHDL simulator for digital design in eSim.
+- Install command (macOS): brew install ghdl
+- Install command (Linux/Ubuntu): sudo apt install ghdl
+- Install command (Windows/Chocolatey): choco install ghdl
+- Version command: ghdl --version (outputs e.g., "GHDL 4.1.0")
+- Latest version (Sep 11, 2025): 4.1.0 (from ghdl.free.fr)
 
-## Ngspice
+Python:
+- Role: Runs system commands (subprocess), checks websites (requests + BeautifulSoup), manages files (os/json), handles UI (tkinter for GUI), and logging.
+- Version: 3.12.7 (Homebrew on macOS; verify with python3 --version)
+- Virtual Environment: python3 -m venv tool_manager_env; source tool_manager_env/bin/activate (Linux/macOS) or tool_manager_env\Scripts\activate (Windows)
 
-- **Description:** Circuit simulator for analog/digital mixed-signal analysis.
-- **Install Commands:**
-  - **macOS:** `brew install ngspice`
-  - **Linux/Ubuntu:** `sudo apt update && sudo apt install ngspice`
-  - **Windows/Chocolatey:** `choco install ngspice`
-- **Version Command:** `ngspice --version` (e.g., "ngspice-45.2 plus...")
-- **Latest Version (Sep 11, 2025):** 45.2 ([ngspice.sourceforge.io/download.html](https://ngspice.sourceforge.io/download.html))
-- **Dependencies:** Handled by package managers (e.g., fftw, gcc, libpng on macOS via Homebrew; checked in code before install)
+CLI/GUI User Interface:
+- CLI: Original text menu in Terminal (6 options: install/update Ngspice/KiCad, view, exit).
+- Enhanced GUI: Tkinter window with buttons for install/update Ngspice/KiCad/GHDL, view tools, exit. Popups for success/errors. Runs the same way as CLI but more user-friendly.
 
----
+Dependencies:
+- Handled by package managers (Homebrew/APT/Chocolatey).
+- Code checker: Verifies tool deps (e.g., brew deps ngspice) before install; warns if missing (e.g., fftw).
 
-## KiCad
+Libraries Needed:
+- Built-in: subprocess (run brew/apt/choco), platform (OS detect), os (files/PATH), json (tools.json), logging (tool_manager.log), tkinter (GUI).
+- External: requests (web fetch), beautifulsoup4 (parse sites for versions).
 
-- **Description:** Tool for schematics, PCB layout, and 3D viewing.
-- **Install Commands:**
-  - **macOS:** `brew install --cask kicad`
-  - **Linux/Ubuntu:**  
-    ```
-    sudo add-apt-repository ppa:kicad/kicad-9.0-releases
-    sudo apt update
-    sudo apt install kicad
-    ```
-  - **Windows/Chocolatey:** `choco install kicad`
-- **Version Command:** `kicad-cli version` (e.g., "KiCad 9.0.4")  
-  - **macOS fallback:** `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli version`
-- **Latest Version (Sep 11, 2025):** 9.0.4 ([kicad.org/download](https://kicad.org/download))
-- **Dependencies:** Handled by package managers (e.g., libwxgtk on Linux; checked in code)
+Cross-Platform Support:
+- macOS: Full (Homebrew, /opt/homebrew/bin paths).
+- Linux (Ubuntu): Stubs with sudo apt; ~/.bashrc for config; tested in VM.
+- Windows: Stubs with choco; setx for PATH/env vars; C:\Program Files paths; tested in VM.
 
----
+Configuration Handling:
+- Sets PATH (e.g., /opt/homebrew/bin on macOS) and env vars (NGSPICE_LIB, GHDL_BIN) in ~/.zshrc (~/.bashrc on Linux).
+- For eSim: Ensures tools are discoverable (restart Terminal after install).
 
-## GHDL (VHDL Support for eSim)
+Update System:
+- Web scraping: requests.get to official sites, BeautifulSoup for versions (e.g., 'ngspice-45.2' in text).
+- Upgrades: brew upgrade (macOS), apt upgrade (Linux), choco upgrade (Windows).
 
-- **Description:** VHDL simulator for digital design in eSim.
-- **Install Commands:**
-  - **macOS:** `brew install ghdl`
-  - **Linux/Ubuntu:** `sudo apt install ghdl`
-  - **Windows/Chocolatey:** `choco install ghdl`
-- **Version Command:** `ghdl --version` (e.g., "GHDL 4.1.0")
-- **Latest Version (Sep 11, 2025):** 4.1.0 ([ghdl.free.fr](https://ghdl.free.fr))
-
----
-
-## Python
-
-- **Role:** Runs system commands (`subprocess`), checks websites (`requests` + `BeautifulSoup`), manages files (`os`/`json`), handles UI (`tkinter` for GUI), and logging.
-- **Version:** 3.12.7 (Homebrew on macOS; verify with `python3 --version`)
-- **Virtual Environment:**
-  - macOS/Linux:  
-    ```
-    python3 -m venv tool_manager_env
-    source tool_manager_env/bin/activate
-    ```
-  - Windows:  
-    ```
-    python -m venv tool_manager_env
-    tool_manager_env\Scripts\activate
-    ```
-
----
-
-## CLI/GUI User Interface
-
-- **CLI:** Original text menu in Terminal (6 options: install/update Ngspice/KiCad, view, exit)
-- **Enhanced GUI:** Tkinter window with buttons for install/update Ngspice/KiCad/GHDL, view tools, exit.  
-  - Popups for success/errors  
-  - More user-friendly, same logic as CLI
-
----
-
-## Dependencies
-
-- **Handled by package managers:** Homebrew, APT, Chocolatey
-- **Code checker:** Verifies tool dependencies (e.g., `brew deps ngspice`) before install; warns if missing (e.g., fftw)
-
----
-
-## Libraries Needed
-
-- **Built-in:**  
-  - `subprocess` (run brew/apt/choco)  
-  - `platform` (OS detect)  
-  - `os` (files/PATH)  
-  - `json` (`tools.json`)  
-  - `logging` (`tool_manager.log`)  
-  - `tkinter` (GUI)
-- **External:**  
-  - `requests` (web fetch)  
-  - `beautifulsoup4` (parse sites for versions)
-
----
-
-## Cross-Platform Support
-
-- **macOS:** Full (Homebrew, `/opt/homebrew/bin` paths)
-- **Linux (Ubuntu):** Stubs with `sudo apt`; `~/.bashrc` for config; tested in VM
-- **Windows:** Stubs with `choco`; `setx` for PATH/env vars; `C:\Program Files` paths; tested in VM
-
----
-
-## Configuration Handling
-
-- Sets PATH (e.g., `/opt/homebrew/bin` on macOS) and env vars (`NGSPICE_LIB`, `GHDL_BIN`) in `~/.zshrc` (`~/.bashrc` on Linux)
-- For eSim: Ensures tools are discoverable (restart Terminal after install)
-
----
-
-## Update System
-
-- **Web scraping:** `requests.get` to official sites, `BeautifulSoup` for versions (e.g., 'ngspice-45.2' in text)
-- **Upgrades:**  
-  - macOS: `brew upgrade`  
-  - Linux: `apt upgrade`  
-  - Windows: `choco upgrade`
-
----
-
-## Run Command (After Setup)
-
-```sh
+Run Command (After Setup):
 source tool_manager_env/bin/activate  # Activate venv
 python main.py  # Launches GUI (or python3 on macOS/Linux)
-```
 
----
+Testing Notes:
+- macOS: GUI opens, buttons install Ngspice (45.2), KiCad (9.0.4), GHDL (4.1.0); deps checked, config sets PATH; updates up-to-date.
+- View Tools: Popup shows versions from tools.json.
+- Logs: tool_manager.log has "INFO: Installed ngspice version 45.2".
+- Edge Cases: No internet – update popup "failed"; missing deps – warn popup.
 
-## Testing Notes
+References:
+- eSim: esim.fossee.in (Ubuntu-focused, adapted for macOS).
+- Ngspice: ngspice.sourceforge.io/download.html (latest 45.2).
+- KiCad: kicad.org/download (latest 9.0.4).
+- GHDL: ghdl.free.fr (latest 4.1.0).
+- Python: docs.python.org (subprocess, tkinter).
+- Package Managers: brew.sh (Homebrew), chocolatey.org (Windows), ubuntu.com (APT).
 
-- **macOS:** GUI opens, buttons install Ngspice (45.2), KiCad (9.0.4), GHDL (4.1.0); dependencies checked, config sets PATH; updates up-to-date
-- **View Tools:** Popup shows versions from `tools.json`
-- **Logs:** `tool_manager.log` has "INFO: Installed ngspice version 45.2"
-- **Edge Cases:**  
-  - No internet: update popup "failed"  
-  - Missing dependencies: warn popup
-
----
-
-## References
-
-- [eSim](https://esim.fossee.in) (Ubuntu-focused, adapted for macOS)
-- [Ngspice](https://ngspice.sourceforge.io/download.html) (latest 45.2)
-- [KiCad](https://kicad.org/download) (latest 9.0.4)
-- [GHDL](https://ghdl.free.fr) (latest 4.1.0)
-- [Python](https://docs.python.org) (subprocess, tkinter)
-- [Homebrew](https://brew.sh), [Chocolatey](https://chocolatey.org), [Ubuntu APT](https://ubuntu.com)
-
----
-
-## Project Enhancements
-
-- **GUI:** Tkinter buttons for better UX (creativity)
-- **Dependency Checker:** Pre-install verification
-- **Configuration:** Auto-PATH/env for eSim
-- **GHDL:** Added for VHDL support
-- **Cross-Platform:** Stubs for Linux/Windows
+Project Enhancements:
+- GUI: Tkinter buttons for better UX (creativity).
+- Dependency Checker: Pre-install verification.
+- Configuration: Auto-PATH/env for eSim.
+- GHDL: Added for VHDL support.
+- Cross-Platform: Stubs for Linux/Windows (tested in VMs).
