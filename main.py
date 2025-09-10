@@ -1,51 +1,53 @@
-import os
-from utils import detect_os, load_tools, save_tools
+from utils import detect_os, load_tools, save_tools, show_message, get_installed_version  # Added get_installed_version
 from installer import install_tool
 from updater import upgrade_tool
+import tkinter as tk
+from tkinter import ttk
+
+def create_gui(tools, os_type):
+    root = tk.Tk()
+    root.title("Advanced eSim Tool Manager")
+    root.geometry("500x400")
+
+    label = ttk.Label(root, text="Advanced eSim Tool Manager", font=("Arial", 16))
+    label.pack(pady=10)
+
+    def on_action(action, tool):
+        if action == 'install':
+            if install_tool(tool, os_type):
+                tools[tool] = get_installed_version(tool)
+                save_tools(tools)
+        elif action == 'update':
+            if upgrade_tool(tool, os_type):
+                tools[tool] = get_installed_version(tool)
+                save_tools(tools)
+
+    def on_view():
+        msg = "Installed Tools:\n"
+        for tool, version in tools.items():
+            msg += f"{tool.capitalize()}: {version or 'Not installed'}\n"
+        show_message("Tools", msg)
+
+    tools_list = ['ngspice', 'kicad', 'ghdl']
+    for tool in tools_list:
+        frame = ttk.Frame(root)
+        frame.pack(pady=5)
+        ttk.Label(frame, text=tool.capitalize()).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame, text="Install", command=lambda t=tool: on_action('install', t)).pack(side=tk.LEFT, padx=5)
+        ttk.Button(frame, text="Update", command=lambda t=tool: on_action('update', t)).pack(side=tk.LEFT, padx=5)
+
+    ttk.Button(root, text="View Tools", command=on_view).pack(pady=10)
+    ttk.Button(root, text="Exit", command=root.quit).pack(pady=5)
+
+    root.mainloop()
 
 def main():
     os_type = detect_os()
     if not os_type:
-        print("Unsupported OS. Exiting.")
+        show_message("Error", "Unsupported OS – macOS/Linux/Windows only")
         return
-    
     tools = load_tools()
-    
-    while True:
-        print("\n=== eSim Automated Tool Manager ===")
-        print("1. Install Ngspice")
-        print("2. Install KiCad")
-        print("3. Check/Update Ngspice")
-        print("4. Check/Update KiCad")
-        print("5. View Installed Tools")
-        print("6. Exit")
-        choice = input("Enter choice (1-6): ").strip()
-        
-        if choice == '1':
-            if install_tool('ngspice', os_type):
-                tools['ngspice'] = get_installed_version('ngspice')  # From utils
-                save_tools(tools)
-        elif choice == '2':
-            if install_tool('kicad', os_type):
-                tools['kicad'] = get_installed_version('kicad')
-                save_tools(tools)
-        elif choice == '3':
-            upgrade_tool('ngspice', os_type)
-            tools['ngspice'] = get_installed_version('ngspice')
-            save_tools(tools)
-        elif choice == '4':
-            upgrade_tool('kicad', os_type)
-            tools['kicad'] = get_installed_version('kicad')
-            save_tools(tools)
-        elif choice == '5':
-            print("Installed Tools:")
-            for tool, version in tools.items():
-                print(f"  {tool}: {version or 'Not installed'}")
-        elif choice == '6':
-            print("Exiting. Check tool_manager.log for logs.")
-            break
-        else:
-            print("Invalid choice. Try again.")
+    create_gui(tools, os_type)
 
 if __name__ == "__main__":
     main()
