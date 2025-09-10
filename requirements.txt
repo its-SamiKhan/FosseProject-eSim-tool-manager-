@@ -1,2 +1,12 @@
 requests
-beautifulsoup4
+beautifulsoup4requests==2.32.3
+beautifulsoup4==4.12.3
+
+
+# Note: Built-in Python libraries used (no pip install needed):
+# - subprocess: For running system commands (e.g., brew, apt, choco)
+# - platform: For OS detection
+# - os: For file and PATH management
+# - json: For tools.json handling
+# - logging: For tool_manager.log
+# - tkinter: For GUI interface
