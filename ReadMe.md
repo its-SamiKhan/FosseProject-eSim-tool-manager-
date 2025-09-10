@@ -267,4 +267,4 @@ MIT License (or as specified by eSim project requirements).
 - [eSim](https://esim.fossee.in)
 - [Ngspice](https://ngspice.sourceforge.io)
 - [KiCad](https://kicad.org)
--
+- [GHDL](https://ghdl.free.fr)
