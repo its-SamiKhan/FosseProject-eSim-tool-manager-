@@ -1,0 +1,20 @@
+# Python cache and temp files
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environment
+tool_manager_env/
+
+# Logs and generated files
+*.log
+tools.json  # Optional: If you don't want to commit generated JSON
+
+# macOS junk
+.DS_Store
