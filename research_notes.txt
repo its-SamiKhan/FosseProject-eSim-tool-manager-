@@ -10,3 +10,9 @@ CLI: Text menu in Terminal.
 Dependencies: Handled by Homebrew.
 Python version: [your version]
 Libraries needed: subprocess, platform, os, json, requests, beautifulsoup4
+
+
+Command to directly run the code:
+
+source tool_manager_env/bin/activate                 
+python main.py
